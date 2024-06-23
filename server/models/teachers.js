@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Teachers.hasMany(models.Students, {
+        foreignKey: "TeacherId",
+        as: "students",
+      });
     }
 
     toJSON() {
@@ -31,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       email: {
-        type: DataTypes.String,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
         validate: {
@@ -40,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       password: {
-        type: DataTypes.String,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: true,
@@ -64,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
           teacher.password = await bcrypt.hash(teacher.password, salt);
         },
         beforeUpdate: async (teacher, options) => {
-          if (teacher.changed(password)) {
+          if (teacher.changed("password")) {
             const salt = await bcrypt.genSalt(10);
             teacher.password = await bcrypt.hash(teacher.password, salt);
           }
