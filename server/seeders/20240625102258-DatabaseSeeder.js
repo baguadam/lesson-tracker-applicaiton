@@ -25,12 +25,11 @@ module.exports = {
     const dates = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
     for (let i = 0; i < teachersCount; i++) {
-      const password = faker.internet.password();
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const password = "almafa";
       const teacher = await Teachers.create({
         name: faker.person.fullName(),
         email: faker.internet.email(),
-        password: hashedPassword,
+        password: password,
         subjects: faker.helpers.arrayElements(subjects, { min: 1, max: 3 }),
       });
 

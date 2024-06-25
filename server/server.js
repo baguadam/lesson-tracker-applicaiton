@@ -8,6 +8,7 @@ app.use(express.json());
 // Routes
 app.use("/students", require("./routes/students"));
 app.use("/teachers", require("./routes/teachers"));
+app.use("/auth", require("./routes/auth"));
 
 // Vertical middleware
 app.use((err, req, res, next) => {
