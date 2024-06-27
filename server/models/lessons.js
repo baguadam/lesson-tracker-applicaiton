@@ -1,66 +1,56 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Students extends Model {
+  class Lessons extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Students.belongsTo(models.Teachers, {
+      Lessons.belongsTo(models.Teachers, {
         foreignKey: "TeacherId",
         as: "teacher",
       });
-      Students.hasMany(models.Lessons, {
+      Lessons.belongsTo(models.Students, {
         foreignKey: "StudentId",
-        as: "lessons",
+        as: "student",
       });
     }
   }
-  Students.init(
+  Lessons.init(
     {
-      name: {
-        type: DataTypes.STRING,
+      date: {
+        type: DataTypes.DATE,
         allowNull: false,
         validate: {
           notNull: true,
         },
       },
-      price: {
+      status: {
+        type: DataTypes.ENUM("PENDING", "HELD", "MISSED"),
+        allowNull: false,
+        defaultValue: "PENDING",
+        validate: {
+          notNull: true,
+        },
+      },
+      paid: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        validate: {
+          notNull: true,
+        },
+      },
+      TeacherId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           notNull: true,
         },
       },
-      subject: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: true,
-          isInSubject(value, next) {
-            this.getTeacher().then((teacher) => {
-              if (teacher && teacher.subjects.includes(value)) {
-                return next();
-              } else {
-                return next(
-                  "Subject must be one of the subjects taught by the teacher!"
-                );
-              }
-            });
-          },
-        },
-      },
-      lessonDates: {
-        type: DataTypes.JSON,
-        allowNull: false,
-        validate: {
-          notNull: true,
-        },
-        defaultValue: [],
-      },
-      TeacherId: {
+      StudentId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
@@ -70,8 +60,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Students",
+      modelName: "Lessons",
     }
   );
-  return Students;
+  return Lessons;
 };

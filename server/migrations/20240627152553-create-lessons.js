@@ -2,35 +2,42 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Students", {
+    await queryInterface.createTable("Lessons", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
+      date: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      status: {
         type: Sequelize.STRING,
         allowNull: false,
+        defaultValue: "PENDING",
       },
-      price: {
-        type: Sequelize.INTEGER,
+      paid: {
+        type: Sequelize.BOOLEAN,
         allowNull: false,
-      },
-      subject: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      lessonDates: {
-        type: Sequelize.JSON,
-        allowNull: false,
-        defaultValue: [],
+        defaultValue: false,
       },
       TeacherId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: "Teachers",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      StudentId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Students",
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -47,6 +54,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Students");
+    await queryInterface.dropTable("Lessons");
   },
 };
