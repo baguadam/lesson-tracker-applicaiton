@@ -39,17 +39,17 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: true,
-          isInSubject(value, next) {
-            this.getTeacher().then((teacher) => {
-              if (teacher && teacher.subjects.includes(value)) {
-                return next();
-              } else {
-                return next(
-                  "Subject must be one of the subjects taught by the teacher!"
-                );
-              }
-            });
-          },
+          // isInSubject(value, next) {
+          //   this.getTeacher().then((teacher) => {
+          //     if (teacher && teacher.subjects.includes(value)) {
+          //       return next();
+          //     } else {
+          //       return next(
+          //         "Subject must be one of the subjects taught by the teacher!"
+          //       );
+          //     }
+          //   });
+          // },
         },
       },
       lessonDates: {
