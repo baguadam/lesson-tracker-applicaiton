@@ -25,7 +25,7 @@ router.get("/students", jwtAuth, handleAuthError, async (req, res, next) => {
   }
 });
 
-router.post("/:id", jwtAuth, handleAuthError, async (req, res, next) => {
+router.put("/:id", jwtAuth, handleAuthError, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { id: currentUserId } = req.auth;
@@ -41,8 +41,25 @@ router.post("/:id", jwtAuth, handleAuthError, async (req, res, next) => {
         id,
       },
     });
+    if (!currentUser) {
+      return res.status(404).json({ message: "Teacher could not be found!" });
+    }
 
-    return res.send("WORKING");
+    const allowedUpdates = ["name", "email", "subjects"];
+    const updates = Object.keys(req.body);
+    const isValidOperation = updates.every((u) => allowedUpdates.includes(u));
+    if (!isValidOperation) {
+      return res.status(400).json({ message: "Invalid updates!" });
+    }
+
+    await currentUser.update(req.body, {
+      fields: allowedUpdates,
+    });
+
+    return res.json({
+      message: "Teacher updated successfully",
+      teacher: currentUser,
+    });
   } catch (err) {
     console.error(err);
     next(err);
