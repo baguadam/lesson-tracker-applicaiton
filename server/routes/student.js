@@ -7,10 +7,13 @@ const {
   handleMissingParamError,
 } = require("../middlewares/authentication");
 const {
-  validateStudentData,
   validateAllowedUpdates,
   validateId,
 } = require("../middlewares/validation");
+const {
+  getStudentAndAuthorize,
+  validateStudentData,
+} = require("../middlewares/studentMiddleware");
 
 router.get(
   "/:id",
@@ -81,30 +84,39 @@ router.put(
   validateId,
   validateAllowedUpdates(["name", "price", "subject", "lessonDates"]),
   validateStudentData,
+  getStudentAndAuthorize,
   async (req, res, next) => {
     try {
-      const { id: studentId } = req.params;
-      const { id: teacherId } = req.auth;
-
-      const student = await Students.findByPk(studentId);
-      if (!student) {
-        return res.status(404).json({ message: "Student not fount" });
-      }
-
-      if (student.TeacherId !== teacherId) {
-        return res
-          .status(403)
-          .json({ message: "Not authorized to modify student!" });
-      }
+      const { student } = req;
 
       await student.update(req.body, {
         fields: ["name", "price", "subject", "lessonDates"],
       });
 
-      return res.json({
+      res.json({
         message: "Student updated successfully",
         student,
       });
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  }
+);
+
+router.delete(
+  "/:id",
+  jwtAuth,
+  handleAuthError,
+  validateId,
+  getStudentAndAuthorize,
+  async (req, res, next) => {
+    try {
+      const { student } = req;
+
+      await student.destroy();
+
+      res.json({ message: "Student deleted successfully!" });
     } catch (err) {
       console.error(err);
       next(err);
