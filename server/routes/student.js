@@ -6,31 +6,41 @@ const {
   handleAuthError,
   handleMissingParamError,
 } = require("../middlewares/authentication");
-const { validateStudentData } = require("../middlewares/validation");
+const {
+  validateStudentData,
+  validateAllowedUpdates,
+  validateId,
+} = require("../middlewares/validation");
 
-router.get("/:id", jwtAuth, handleAuthError, async (req, res, next) => {
-  try {
-    const { id: studentId } = req.params;
-    const { id: teacherId } = req.auth;
+router.get(
+  "/:id",
+  jwtAuth,
+  handleAuthError,
+  validateId,
+  async (req, res, next) => {
+    try {
+      const { id: studentId } = req.params;
+      const { id: teacherId } = req.auth;
 
-    const searchedStudent = await Students.findOne({
-      where: {
-        id: studentId,
-        TeacherId: teacherId,
-      },
-    });
-
-    if (!searchedStudent) {
-      return res.status(404).json({
-        message: "Student not found!",
+      const searchedStudent = await Students.findOne({
+        where: {
+          id: studentId,
+          TeacherId: teacherId,
+        },
       });
-    }
 
-    return res.json(searchedStudent);
-  } catch (err) {
-    next(err);
+      if (!searchedStudent) {
+        return res.status(404).json({
+          message: "Student not found!",
+        });
+      }
+
+      return res.json(searchedStudent);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 router.post(
   "/",
@@ -57,6 +67,44 @@ router.post(
       });
 
       res.json({ message: "Student created successfully", student });
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  }
+);
+
+router.put(
+  "/:id",
+  jwtAuth,
+  handleAuthError,
+  validateId,
+  validateAllowedUpdates(["name", "price", "subject", "lessonDates"]),
+  validateStudentData,
+  async (req, res, next) => {
+    try {
+      const { id: studentId } = req.params;
+      const { id: teacherId } = req.auth;
+
+      const student = await Students.findByPk(studentId);
+      if (!student) {
+        return res.status(404).json({ message: "Student not fount" });
+      }
+
+      if (student.TeacherId !== teacherId) {
+        return res
+          .status(403)
+          .json({ message: "Not authorized to modify student!" });
+      }
+
+      await student.update(req.body, {
+        fields: ["name", "price", "subject", "lessonDates"],
+      });
+
+      return res.json({
+        message: "Student updated successfully",
+        student,
+      });
     } catch (err) {
       console.error(err);
       next(err);
