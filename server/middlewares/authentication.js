@@ -10,18 +10,18 @@ const handleMissingParamError = (requiredParams) => (req, res, next) => {
     res.status(400).json({
       error: `Missing required parameters: ${missingParams.join(", ")}`,
     });
-  } else {
-    next();
   }
+
+  next();
 };
 
 // Middleware to handle authentication errors
-const handleAuthError = (req, res, next) => {
+const handleAuthError = (err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
     res.status(401).json({ message: "Not authorized" });
   }
 
-  next();
+  next(err);
 };
 
 // Middleware to handle teacher id matching in case of modifications

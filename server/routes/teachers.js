@@ -15,13 +15,8 @@ router.put(
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { id: currentUserId } = req.auth;
 
-      const currentUser = await Teachers.findOne({
-        where: {
-          id,
-        },
-      });
+      const currentUser = await Teachers.findByPk(id);
       if (!currentUser) {
         return res.status(404).json({ message: "Teacher could not be found!" });
       }
