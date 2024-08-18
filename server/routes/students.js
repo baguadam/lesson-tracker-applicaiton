@@ -6,14 +6,21 @@ const { jwtAuth, handleAuthError } = require("../middlewares/authentication");
 router.get("/", jwtAuth, handleAuthError, async (req, res, next) => {
   try {
     const { id } = req.auth;
-    const relatedStudents = await Students.findAll({
+
+    const currentUserWithStudents = await Teachers.findOne({
       where: {
-        TeacherId: id,
+        id,
       },
+      include: [{ model: Students, as: "students" }],
     });
 
-    res.json(relatedStudents);
+    if (!currentUserWithStudents) {
+      return res.status(404).json({ message: "Teacher could not be found!" });
+    }
+
+    res.json(currentUserWithStudents.students);
   } catch (err) {
+    console.error(err);
     next(err);
   }
 });
@@ -32,7 +39,7 @@ router.get("/:id", jwtAuth, handleAuthError, async (req, res, next) => {
 
     if (!searchedStudent) {
       return res.status(404).json({
-        message: "Couldn't find related student with the provided ID!",
+        message: "Student not found!",
       });
     }
 

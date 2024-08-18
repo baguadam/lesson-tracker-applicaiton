@@ -16,16 +16,30 @@ const handleMissingParamError = (requiredParams) => (req, res, next) => {
 };
 
 // Middleware to handle authentication errors
-const handleAuthError = (err, req, res, next) => {
+const handleAuthError = (req, res, next) => {
   if (err.name === "UnauthorizedError") {
     res.status(401).json({ message: "Not authorized" });
-  } else {
-    next(err);
   }
+
+  next();
+};
+
+// Middleware to handle teacher id matching in case of modifications
+const handleNotMatchingTeacher = (req, res, next) => {
+  if (!req.params.id) {
+    return res.status(400).json({ message: "Missing Teacher id!" });
+  } else if (parseInt(req.params.id) !== parseInt(req.auth.id)) {
+    return res
+      .status(401)
+      .json({ message: "Not authorized to modify the user!" });
+  }
+
+  next();
 };
 
 module.exports = {
   jwtAuth,
   handleMissingParamError,
   handleAuthError,
+  handleNotMatchingTeacher,
 };
