@@ -51,9 +51,15 @@ router.delete(
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { currentUserId } = req.auth;
 
-      res.send("WORKING SO FAR");
+      const teacher = await Teachers.findByPk(id);
+      if (!teacher) {
+        return res.status(404).json({ message: "Teacher could not be found!" });
+      }
+
+      await teacher.destroy();
+
+      res.json({ message: "Teacher deleted successfully!" });
     } catch (err) {
       console.error(err);
       next(err);
