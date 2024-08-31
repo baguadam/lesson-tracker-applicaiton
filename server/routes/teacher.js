@@ -6,12 +6,18 @@ const {
   jwtAuth,
   handleNotMatchingTeacher,
 } = require("../middlewares/authentication");
+const {
+  validateAllowedUpdates,
+  validateIds,
+} = require("../middlewares/validation");
 
 router.put(
   "/:id",
   jwtAuth,
   handleAuthError,
+  validateIds(["id"]),
   handleNotMatchingTeacher,
+  validateAllowedUpdates(["name", "email", "subjects"]),
   async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -19,13 +25,6 @@ router.put(
       const currentUser = await Teachers.findByPk(id);
       if (!currentUser) {
         return res.status(404).json({ message: "Teacher could not be found!" });
-      }
-
-      const allowedUpdates = ["name", "email", "subjects"];
-      const updates = Object.keys(req.body);
-      const isValidOperation = updates.every((u) => allowedUpdates.includes(u));
-      if (!isValidOperation) {
-        return res.status(400).json({ message: "Invalid updates!" });
       }
 
       await currentUser.update(req.body, {
@@ -47,6 +46,7 @@ router.delete(
   "/:id",
   jwtAuth,
   handleAuthError,
+  validateIds(["id"]),
   handleNotMatchingTeacher,
   async (req, res, next) => {
     try {

@@ -1,3 +1,4 @@
+const { jwtAuth, handleAuthError } = require("./middlewares/authentication");
 const { Teachers, Students } = require("./models");
 const express = require("express");
 require("express-async-errors");
@@ -6,9 +7,32 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.use("/students", require("./routes/students"));
+app.use("/student", require("./routes/student"));
 app.use("/teacher", require("./routes/teacher"));
 app.use("/auth", require("./routes/auth"));
+
+// basic routes
+app.get("/students", jwtAuth, handleAuthError, async (req, res, next) => {
+  try {
+    const { id } = req.auth;
+
+    const currentUserWithStudents = await Teachers.findOne({
+      where: {
+        id,
+      },
+      include: [{ model: Students, as: "students" }],
+    });
+
+    if (!currentUserWithStudents) {
+      return res.status(404).json({ message: "Teacher could not be found!" });
+    }
+
+    res.json(currentUserWithStudents.students);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
 
 // Vertical middleware
 app.use((err, req, res, next) => {
