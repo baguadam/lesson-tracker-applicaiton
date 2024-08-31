@@ -81,7 +81,7 @@ module.exports = {
             lessonDates: lessonDates,
             TeacherId: teacher.id,
           },
-          { transaction }
+          { transaction, hooks: false }
         );
 
         for (let j = 0; j < lessonDates.length; j++) {
