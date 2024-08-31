@@ -24,7 +24,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
         validate: {
-          notNull: true,
+          notNull: {
+            msg: "Date cannot be null",
+          },
         },
       },
       status: {
@@ -32,7 +34,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: "PENDING",
         validate: {
-          notNull: true,
+          notNull: {
+            msg: "Date cannot be null",
+          },
         },
       },
       paid: {
@@ -40,21 +44,27 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
         validate: {
-          notNull: true,
+          notNull: {
+            msg: "Paid cannot be null",
+          },
         },
       },
       TeacherId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true,
+          notNull: {
+            msg: "Teacher ID cannot be null",
+          },
         },
       },
       StudentId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true,
+          notNull: {
+            msg: "Student ID cannot be null",
+          },
         },
       },
     },
