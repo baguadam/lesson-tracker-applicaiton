@@ -85,7 +85,31 @@ router.get(
   validateIds(["id", "lessonId"]),
   async (req, res, next) => {
     try {
-      return res.send("WORKING");
+      const { id: studentId } = req.params;
+      const { lessonId } = req.params;
+      const { id: teacherId } = req.auth;
+
+      const lesson = await Lessons.findOne({
+        where: {
+          id: lessonId,
+        },
+        include: [
+          {
+            model: Students,
+            as: "student",
+            where: {
+              id: studentId,
+              TeacherId: teacherId,
+            },
+          },
+        ],
+      });
+
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found!" });
+      }
+
+      return res.json({ message: "Lesson found successfully", lesson });
     } catch (err) {
       console.error(err);
       next(err);
