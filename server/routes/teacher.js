@@ -8,14 +8,14 @@ const {
 } = require("../middlewares/authentication");
 const {
   validateAllowedUpdates,
-  validateId,
+  validateIds,
 } = require("../middlewares/validation");
 
 router.put(
   "/:id",
   jwtAuth,
   handleAuthError,
-  validateId,
+  validateIds(["id"]),
   handleNotMatchingTeacher,
   validateAllowedUpdates(["name", "email", "subjects"]),
   async (req, res, next) => {
@@ -46,7 +46,7 @@ router.delete(
   "/:id",
   jwtAuth,
   handleAuthError,
-  validateId,
+  validateIds(["id"]),
   handleNotMatchingTeacher,
   async (req, res, next) => {
     try {

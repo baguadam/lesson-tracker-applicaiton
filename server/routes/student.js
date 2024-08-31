@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Students, Teachers } = require("../models");
+const { Students, Teachers, Lessons } = require("../models");
 const {
   jwtAuth,
   handleAuthError,
@@ -8,7 +8,7 @@ const {
 } = require("../middlewares/authentication");
 const {
   validateAllowedUpdates,
-  validateId,
+  validateIds,
 } = require("../middlewares/validation");
 const {
   getStudentAndAuthorize,
@@ -19,7 +19,7 @@ router.get(
   "/:id",
   jwtAuth,
   handleAuthError,
-  validateId,
+  validateIds(["id"]),
   async (req, res, next) => {
     try {
       const { id: studentId } = req.params;
@@ -40,6 +40,54 @@ router.get(
 
       return res.json(searchedStudent);
     } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  "/:id/lessons",
+  jwtAuth,
+  handleAuthError,
+  validateIds(["id"]),
+  async (req, res, next) => {
+    try {
+      const { id: studentId } = req.params;
+      const { id: teacherId } = req.auth;
+
+      const studentWithLessons = await Students.findOne({
+        where: {
+          id: studentId,
+          TeacherId: teacherId,
+        },
+        include: [{ model: Lessons, as: "lessons" }],
+      });
+
+      if (!studentWithLessons) {
+        return res.status(404).json({ message: "Student not found!" });
+      }
+
+      return res.json({
+        message: "Student found with lessons",
+        lessons: studentWithLessons.lessons,
+      });
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  }
+);
+
+router.get(
+  "/:id/lesson/:lessonId",
+  jwtAuth,
+  handleAuthError,
+  validateIds(["id", "lessonId"]),
+  async (req, res, next) => {
+    try {
+      return res.send("WORKING");
+    } catch (err) {
+      console.error(err);
       next(err);
     }
   }
@@ -81,7 +129,7 @@ router.put(
   "/:id",
   jwtAuth,
   handleAuthError,
-  validateId,
+  validateIds(["id"]),
   validateAllowedUpdates(["name", "price", "subject", "lessonDates"]),
   validateStudentData,
   getStudentAndAuthorize,
@@ -108,7 +156,7 @@ router.delete(
   "/:id",
   jwtAuth,
   handleAuthError,
-  validateId,
+  validateIds(["id"]),
   getStudentAndAuthorize,
   async (req, res, next) => {
     try {

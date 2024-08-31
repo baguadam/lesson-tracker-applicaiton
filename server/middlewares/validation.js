@@ -8,16 +8,20 @@ const validateAllowedUpdates = (allowedUpdates) => (req, res, next) => {
   next();
 };
 
-const validateId = (req, res, next) => {
-  const { id } = req.params;
+const validateIds = (paramNames) => (req, res, next) => {
+  for (const paramName of paramNames) {
+    const id = req.params[paramName];
 
-  if (!id) {
-    return res.status(400).json({ message: "Missing ID" });
-  }
+    if (!id) {
+      return res.status(400).json({ message: `Missing ${paramName}` });
+    }
 
-  const parsedId = parseInt(id, 10);
-  if (!Number.isInteger(parsedId) || parsedId < 1) {
-    return res.status(400).json({ message: "ID must be a positive integer!" });
+    const parsedId = parseInt(id, 10);
+    if (!Number.isInteger(parsedId) || parsedId < 1) {
+      return res
+        .status(400)
+        .json({ message: `${paramName} must be a positive integer!` });
+    }
   }
 
   next();
@@ -25,5 +29,5 @@ const validateId = (req, res, next) => {
 
 module.exports = {
   validateAllowedUpdates,
-  validateId,
+  validateIds,
 };
