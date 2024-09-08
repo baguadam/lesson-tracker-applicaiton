@@ -1,0 +1,9 @@
+form {
+  background-color: #2e2d2d;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  padding: 40px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
+  border-radius: 5px;
+}

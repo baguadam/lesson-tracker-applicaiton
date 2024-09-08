@@ -2,11 +2,10 @@ import "./App.css";
 import Login from "./auth/Login";
 
 const App = () => {
-
   return (
-    <>
+    <div className="wrapper">
       <Login />
-    </>
+    </div>
   );
 };
 
