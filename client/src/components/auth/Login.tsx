@@ -4,6 +4,13 @@ import CustomInputField from "../common/CustomInputField";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Errors, LoginCredentials } from "../../utils/types";
 import { validateInputs } from "../../utils/validator";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  login,
+  logout,
+  selectAuthTokan,
+  selectLoggedInUser,
+} from "../../state/authSlice";
 
 const Login = () => {
   // **********
@@ -15,6 +22,9 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState<Errors>({});
+  const loggedInUser = useSelector(selectLoggedInUser);
+  const token = useSelector(selectAuthTokan);
+  const dispatch = useDispatch();
 
   // **********
   // HANDLERS
@@ -24,6 +34,11 @@ const Login = () => {
     setCredentials({ ...credentials, [name]: value });
   };
 
+  const handleCheckClick = () => {
+    console.log("loggedInUser: ", loggedInUser);
+    console.log("token: ", token);
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email, password } = credentials;
@@ -31,9 +46,18 @@ const Login = () => {
     // validation
     const newErrors = validateInputs({ email, password });
     setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (Object.keys(newErrors).length !== 0) {
+      dispatch(logout());
       return;
     }
+
+    const payload = {
+      username: email,
+      token: password,
+    };
+
+    // dispatch login action
+    dispatch(login(payload));
   };
 
   return (
@@ -67,6 +91,9 @@ const Login = () => {
           Bejelentkezés
         </Button>
       </form>
+      <Button variant="outlined" onClick={handleCheckClick}>
+        Ellenőrzés
+      </Button>
     </div>
   );
 };
