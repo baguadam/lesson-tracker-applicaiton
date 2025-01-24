@@ -5,7 +5,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { Errors, LoginCredentials } from "../../utils/types";
 import { validateInputs } from "../../utils/validator";
 import { useDispatch } from "react-redux";
-import { login, logout } from "../../state/authSlice";
+import { useLoginMutation } from "../../state/apiSlice";
 
 const Login = () => {
   // **********
@@ -18,6 +18,7 @@ const Login = () => {
 
   const [errors, setErrors] = useState<Errors>({});
   const dispatch = useDispatch();
+  const [sendLogin] = useLoginMutation();
 
   // **********
   // HANDLERS
@@ -27,7 +28,7 @@ const Login = () => {
     setCredentials({ ...credentials, [name]: value });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email, password } = credentials;
 
@@ -35,17 +36,18 @@ const Login = () => {
     const newErrors = validateInputs({ email, password });
     setErrors(newErrors);
     if (Object.keys(newErrors).length !== 0) {
-      dispatch(logout());
       return;
     }
 
-    const payload = {
-      username: email,
-      token: password,
-    };
-
-    // dispatch login action
-    dispatch(login(payload));
+    // api call
+    await sendLogin(credentials)
+      .unwrap()
+      .then((payload) => {
+        console.log(`payload: ${payload}`);
+      })
+      .catch((e) => {
+        console.error(`An error occured during operation: ${e}`);
+      });
   };
 
   return (
