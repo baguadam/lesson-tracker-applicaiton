@@ -4,13 +4,8 @@ import CustomInputField from "../common/CustomInputField";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Errors, LoginCredentials } from "../../utils/types";
 import { validateInputs } from "../../utils/validator";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  login,
-  logout,
-  selectAuthTokan,
-  selectLoggedInUser,
-} from "../../state/authSlice";
+import { useDispatch } from "react-redux";
+import { login, logout } from "../../state/authSlice";
 
 const Login = () => {
   // **********
@@ -22,8 +17,6 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState<Errors>({});
-  const loggedInUser = useSelector(selectLoggedInUser);
-  const token = useSelector(selectAuthTokan);
   const dispatch = useDispatch();
 
   // **********
@@ -32,11 +25,6 @@ const Login = () => {
   const handleCredentialsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCredentials({ ...credentials, [name]: value });
-  };
-
-  const handleCheckClick = () => {
-    console.log("loggedInUser: ", loggedInUser);
-    console.log("token: ", token);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -91,9 +79,6 @@ const Login = () => {
           Bejelentkezés
         </Button>
       </form>
-      <Button variant="outlined" onClick={handleCheckClick}>
-        Ellenőrzés
-      </Button>
     </div>
   );
 };
