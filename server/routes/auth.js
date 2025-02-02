@@ -19,8 +19,9 @@ router.post(
       const { email, password } = req.body;
 
       const teacher = await Teachers.findOne({ where: { email } });
-      if (!teacher)
+      if (!teacher) {
         return res.status(400).json({ message: "User cannot be found!" });
+      }
 
       if (teacher.comparePassword(password)) {
         const token = jwt.sign(teacher.toJSON(), "secret-key", {

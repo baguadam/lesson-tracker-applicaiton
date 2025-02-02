@@ -6,12 +6,13 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/" }),
   endpoints: (builder) => ({
     login: builder.mutation<string, LoginCredentials>({
-      query: (LoginData) => ({
+      query: ({ email, password }) => ({
         url: `auth/login`,
         method: "POST",
         body: {
           strategy: "local",
-          LoginData,
+          email,
+          password,
         },
       }),
     }),

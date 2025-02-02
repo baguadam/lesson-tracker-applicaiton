@@ -46,7 +46,7 @@ const Login = () => {
         console.log(`payload: ${payload}`);
       })
       .catch((e) => {
-        console.error(`An error occured during operation: ${e}`);
+        console.error(`An error occured during operation: ${e.data.message}`);
       });
   };
 
