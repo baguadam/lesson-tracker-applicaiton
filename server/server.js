@@ -1,10 +1,12 @@
 const { jwtAuth, handleAuthError } = require("./middlewares/authentication");
 const { Teachers, Students } = require("./models");
 const express = require("express");
+const cors = require("cors");
 require("express-async-errors");
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 // Routes
 app.use("/student", require("./routes/student"));
@@ -48,7 +50,7 @@ app.use((err, req, res, next) => {
 
 // Listening on port 3000
 app.listen(3000, async () => {
-  console.log("Server is running on port 3000");
+  console.log("Cors enabled server is running on port 3000");
   try {
     await require("./models").sequelize.authenticate();
     console.log("Database connected!");

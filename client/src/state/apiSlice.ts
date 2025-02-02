@@ -7,7 +7,7 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     login: builder.mutation<string, LoginCredentials>({
       query: (LoginData) => ({
-        url: `auth/lohgin`,
+        url: `auth/login`,
         method: "POST",
         body: {
           strategy: "local",
