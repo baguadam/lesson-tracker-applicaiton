@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Alert, Box } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 
 const SnackbarMessage = ({
@@ -13,11 +13,20 @@ const SnackbarMessage = ({
   return (
     <Box sx={{ width: 500 }}>
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={open}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={6000}
         onClose={handleClose}
-        message={message}
-      />
+      >
+        <Alert
+          onClose={handleClose}
+          severity="error"
+          sx={{ width: "100%" }}
+          variant="filled"
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
