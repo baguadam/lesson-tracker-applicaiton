@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { LoginCredentials } from "../utils/types";
+import { LoginCredentials, Token } from "../utils/types";
 
 export const apiSlice = createApi({
   reducerPath: "apiSlice",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/" }),
   endpoints: (builder) => ({
-    login: builder.mutation<string, LoginCredentials>({
+    login: builder.mutation<Token, LoginCredentials>({
       query: ({ email, password }) => ({
         url: `auth/login`,
         method: "POST",

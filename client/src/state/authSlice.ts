@@ -2,23 +2,23 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 
 interface Auth {
-  username: string | null;
+  email: string | null;
   token: string | null;
 }
 
-const initialState: Auth = { username: null, token: null };
+const initialState: Auth = { email: null, token: null };
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     login: (state, action: PayloadAction<Auth>) => {
-      const { username, token } = action.payload;
-      state.username = username;
+      const { email, token } = action.payload;
+      state.email = email;
       state.token = token;
     },
     logout: (state) => {
-      state.username = null;
+      state.email = null;
       state.token = null;
     },
   },
@@ -31,5 +31,5 @@ export const authReducer = authSlice.reducer;
 export const { login, logout } = authSlice.actions;
 
 // selectors
-export const selectLoggedInUser = (state: RootState) => state.auth.username;
+export const selectLoggedInUser = (state: RootState) => state.auth.email;
 export const selectAuthTokan = (state: RootState) => state.auth.token;

@@ -2,10 +2,12 @@ import { Button } from "@mui/material";
 import "./Login.css";
 import CustomInputField from "../common/CustomInputField";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Errors, LoginCredentials } from "../../utils/types";
+import { Errors, LoginCredentials, LoginError } from "../../utils/types";
 import { validateInputs } from "../../utils/validator";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../state/apiSlice";
+import { login } from "../../state/authSlice";
+import SnackbarMessage from "../common/SnackbarMessage";
 
 const Login = () => {
   // **********
@@ -15,7 +17,10 @@ const Login = () => {
     email: "",
     password: "",
   });
-
+  const [loginError, setLoginError] = useState<LoginError>({
+    isError: false,
+    errorMessage: "",
+  });
   const [errors, setErrors] = useState<Errors>({});
   const dispatch = useDispatch();
   const [sendLogin] = useLoginMutation();
@@ -26,6 +31,10 @@ const Login = () => {
   const handleCredentialsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCredentials({ ...credentials, [name]: value });
+  };
+
+  const handleSnackbarClose = () => {
+    setLoginError({ isError: false, errorMessage: "" });
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -42,11 +51,13 @@ const Login = () => {
     // api call
     await sendLogin(credentials)
       .unwrap()
-      .then((payload) => {
-        console.log(`payload: ${payload}`);
+      .then(({ token }) => {
+        dispatch(login({ email, token }));
+        setLoginError({ isError: false, errorMessage: "" });
       })
       .catch((e) => {
         console.error(`An error occured during operation: ${e.data.message}`);
+        setLoginError({ isError: true, errorMessage: e.data.message });
       });
   };
 
@@ -81,6 +92,12 @@ const Login = () => {
           Bejelentkezés
         </Button>
       </form>
+
+      <SnackbarMessage
+        message={loginError.errorMessage}
+        open={loginError.isError}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

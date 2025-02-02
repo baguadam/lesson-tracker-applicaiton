@@ -1,13 +1,5 @@
-import { Theme } from "@emotion/react";
-import { SxProps, TextField, TextFieldVariants } from "@mui/material";
-
-interface CustomInputFieldProps {
-  label: string;
-  type?: string;
-  variant?: TextFieldVariants;
-  sx?: SxProps<Theme>;
-  [key: string]: unknown;
-}
+import { TextField } from "@mui/material";
+import { CustomInputFieldProps } from "../../utils/types";
 
 const CustomInputField = ({
   label,
