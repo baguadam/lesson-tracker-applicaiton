@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../state/apiSlice";
 import { login } from "../../state/authSlice";
 import SnackbarMessage from "../common/SnackbarMessage";
+import { useNavigate } from "react-router";
 
 const Login = () => {
   // **********
@@ -23,6 +24,7 @@ const Login = () => {
   });
   const [errors, setErrors] = useState<Errors>({});
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [sendLogin] = useLoginMutation();
 
   // **********
@@ -54,6 +56,8 @@ const Login = () => {
       .then(({ token }) => {
         dispatch(login({ email, token }));
         setLoginError({ isError: false, errorMessage: "" });
+
+        navigate("/dashboard", { replace: true });
       })
       .catch((e) => {
         console.error(`An error occured during operation: ${e.data.message}`);

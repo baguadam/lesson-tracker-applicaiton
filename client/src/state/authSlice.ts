@@ -33,3 +33,4 @@ export const { login, logout } = authSlice.actions;
 // selectors
 export const selectLoggedInUser = (state: RootState) => state.auth.email;
 export const selectAuthTokan = (state: RootState) => state.auth.token;
+export const selectIsAuthenticated = (state: RootState) => !!state.auth.token;
