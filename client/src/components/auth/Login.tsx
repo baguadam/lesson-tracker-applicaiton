@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../state/apiSlice";
 import { login } from "../../state/authSlice";
 import SnackbarMessage from "../common/SnackbarMessage";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const Login = () => {
   // **********
@@ -45,8 +45,8 @@ const Login = () => {
 
     // validation
     const newErrors = validateInputs({ email, password });
-    setErrors(newErrors);
     if (Object.keys(newErrors).length !== 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -60,8 +60,11 @@ const Login = () => {
         navigate("/dashboard", { replace: true });
       })
       .catch((e) => {
-        console.error(`An error occured during operation: ${e.data.message}`);
-        setLoginError({ isError: true, errorMessage: e.data.message });
+        const errorMessage =
+          e?.data?.message || "Hiba történt, próbáld meg újra!";
+
+        console.error(`An error occured during operation: ${errorMessage}`);
+        setLoginError({ isError: true, errorMessage: errorMessage });
       });
   };
 
@@ -96,6 +99,10 @@ const Login = () => {
           Bejelentkezés
         </Button>
       </form>
+
+      <nav>
+        <Link to="/registration">Regisztráció</Link>
+      </nav>
 
       <SnackbarMessage
         message={loginError.errorMessage}
