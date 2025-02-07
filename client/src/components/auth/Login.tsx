@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import "./Login.css";
+import "../../styles/Forms.css";
 import CustomInputField from "../common/CustomInputField";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Errors, LoginCredentials, LoginError } from "../../utils/types";
@@ -94,7 +94,12 @@ const Login = () => {
         <Button
           type="submit"
           variant="outlined"
-          sx={{ color: "white", borderColor: "black", height: "40px" }}
+          sx={{
+            color: "white",
+            borderColor: "black",
+            height: "40px",
+            marginBottom: "20px",
+          }}
         >
           Bejelentkezés
         </Button>
